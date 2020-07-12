@@ -21,13 +21,12 @@ int main(void)
     int first2Digit = get2FirstDigit(cardNumber);
     printf("%d - this is the 2 first digit\n", first2Digit);
 
-    // get number of digit
+    // get number of digit for validation
     int numberOfDigit = getNumberOfDigit(cardNumber);
 
     // compute checkSum: if not ok -> INVALID\n
     if (!isCardNumberValid(cardNumber))
     {
-        //printf("CheckSum invalid\n");
         printf("INVALID\n");
     }
         // MASTERCARD\n (51, 52, 53, 54, or 55) - 16-digit
@@ -41,14 +40,13 @@ int main(void)
         printf("AMEX\n");
     }
         // get the first number to check - VISA\n (4) 13- and 16-digit
-    else if ( (((first2Digit - (first2Digit % 10)) / 10) == 4) && (numberOfDigit == 13 || numberOfDigit == 16))
+    else if ((((first2Digit - (first2Digit % 10)) / 10) == 4) && (numberOfDigit == 13 || numberOfDigit == 16))
     {
         printf("VISA\n");
     }
         // if none of the above then INVALID\n
     else
     {
-        //printf("Doesn't fit in any other category\n");
         printf("INVALID\n");
     }
 }
@@ -65,9 +63,10 @@ bool isCardNumberValid(long cardNumber)
         if (i % 2 == 0)
         {
             lastExtractedDigit = lastExtractedDigit * 2;
-            if(lastExtractedDigit > 9){
+            if (lastExtractedDigit > 9)
+            {
                 digitSum += (lastExtractedDigit % 10);
-                lastExtractedDigit = (lastExtractedDigit - (lastExtractedDigit % 10)) /10;
+                lastExtractedDigit = (lastExtractedDigit - (lastExtractedDigit % 10)) / 10;
             }
         }
         digitSum += lastExtractedDigit;
@@ -93,7 +92,8 @@ int get2FirstDigit(long cardNumber)
     return cardNumber;
 }
 
-int getNumberOfDigit(long cardNumber){
+int getNumberOfDigit(long cardNumber)
+{
     int numberOfDigit = 0;
     while (cardNumber > 0)
     {
