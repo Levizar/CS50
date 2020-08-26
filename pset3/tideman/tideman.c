@@ -97,6 +97,11 @@ int main(int argc, string argv[])
 
     add_pairs();
     sort_pairs(0, pair_count - 1);
+    for (int a = 0; a < candidate_count; ++a) {
+        for (int b = 0; b < candidate_count; ++b) {
+            printf("pref[%i][%i]: %i ",a,b, preferences[a][b]);
+        }
+    }
     lock_pairs();
     print_winner();
     return 0;
@@ -171,14 +176,14 @@ void add_pairs(void)
 void sort_pairs(int inf_lim, int top_lim)
 {
     // if length = 1 : already sorted
-    if ((inf_lim - top_lim) == 1)
+    if ((top_lim - inf_lim) == 1)
     {
         return;
     }
     // get the middle of the current portion
     int middle = inf_lim + ((top_lim - inf_lim)/2);
     // sort left before middle
-    sort_pairs(inf_lim, middle - 1);
+    sort_pairs(inf_lim, middle);
     // sort right from middle
     sort_pairs(middle, top_lim);
 
@@ -253,7 +258,7 @@ void print_winner(void)
     {
         if(!isCandidateLocked(i))
         {
-            printf("%s", candidates[i]);
+            printf("%s\n", candidates[i]);
         }
     }
 }
