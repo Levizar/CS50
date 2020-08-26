@@ -26,6 +26,7 @@ pair pairs[MAX * (MAX - 1) / 2];
 
 int pair_count;
 int candidate_count;
+int currentWinner;
 
 // Function prototypes
 bool vote(int rank, string name, int ranks[]);
@@ -34,6 +35,8 @@ void add_pairs(void);
 void sort_pairs(int inf_lim, int top_lim);
 void lock_pairs(void);
 void print_winner(void);
+bool isCurrentPairCycling(int j);
+bool isCandidateLocked(int candidateIndex);
 
 int main(int argc, string argv[])
 {
@@ -158,8 +161,7 @@ void add_pairs(void)
             }
             else
             {
-                // i and j are even
-                // nothing to do
+                // i and j are even : no winner, don't add the pair
             }
         }
     }
@@ -189,18 +191,19 @@ void sort_pairs(int inf_lim, int top_lim)
     int indexLeft = inf_lim;
     int indexRight = middle;
     int i = 0;
-    while(numberOfPairToOrder != 0)
+    while(numberOfPairToOrder > 0)
     {
-        bool isMiddleReached = indexLeft + i == middle;
+        bool isMiddleReached = inf_lim + i == middle;
         bool isLeftBiggerThanRight = pairs[indexLeft].winner > pairs[indexRight].winner;
         bool isLeftFirst = !isMiddleReached && isLeftBiggerThanRight;
         subOrderedPairs[i].winner = isLeftFirst ? pairs[indexLeft].winner : pairs[indexRight].winner;
-        subOrderedPairs[i].loser = isLeftFirst ? pairs[indexLeft].loser : pairs[indexRight].loser;
+        subOrderedPairs[i].loser = isLeftFirst ? pairs[indexLeft++].loser : pairs[indexRight++].loser;
         i++;
         numberOfPairToOrder--;
     }
     // subArray is now sorted : erase values in pairs array for this range
-    for (int j = 0; j < numberOfOrderedPairToCopy; ++j) {
+    for (int j = 0; j < numberOfOrderedPairToCopy; ++j)
+    {
         pairs[inf_lim + j] = subOrderedPairs[j];
     }
 }
@@ -208,13 +211,62 @@ void sort_pairs(int inf_lim, int top_lim)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    // TODO
-    return;
+    // lock[i][j] : i wins over j => turn true except if it creates a cycle.
+    for (int i = 0; i < pair_count; ++i)
+    {
+        currentWinner = pairs[i].winner;
+        int currentLoser = pairs[i].loser;
+        // Does lock[winner][loser] create a cycle ?
+        if(!isCurrentPairCycling(currentLoser))
+        {
+            locked[currentWinner][currentLoser] = true;
+        }
+    }
+}
+
+bool isCurrentPairCycling(int loser)
+{
+    // base case: if the loser is the currentWinner then it is cycling
+    if(loser == currentWinner)
+    {
+        return true;
+    }
+
+    // is the loser locking someone if yes, is it cycling to the currentWinner?
+    for (int i = 0; i < candidate_count; ++i)
+    {
+        if(locked[loser][i] && isCurrentPairCycling(i))
+        {
+            return true;
+        }
+    }
+
+    // base case: if the loser
+    return false;
 }
 
 // Print the winner of the election
 void print_winner(void)
 {
-    // TODO
-    return;
+    int winner;
+    for (int i = 0; i < candidate_count; ++i)
+    {
+        if(!isCandidateLocked(i))
+        {
+            printf("%s", candidates[i]);
+        }
+    }
 }
+
+bool isCandidateLocked(int candidateIndex)
+{
+    for (int i = 0; i < candidate_count; ++i)
+    {
+        if(locked[i][candidateIndex])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
