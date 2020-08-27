@@ -33,6 +33,7 @@ bool vote(int rank, string name, int ranks[]);
 void record_preferences(const int ranks[]);
 void add_pairs(void);
 void sort_pairs(int inf_lim, int top_lim);
+void merge(int inf_lim, int middle, int top_lim);
 void lock_pairs(void);
 void print_winner(void);
 bool isCurrentPairCycling(int j);
@@ -95,13 +96,20 @@ int main(int argc, string argv[])
         printf("\n");
     }
 
+//    for (int a = 0; a < candidate_count; ++a) {
+//        for (int b = 0; b < candidate_count; ++b) {
+//            printf("pref[%s][%s]: %i ",candidates[a],candidates[b], preferences[a][b]);
+//        }
+//        printf("\n");
+//    }
+
     add_pairs();
+
+//    for (int k = 0; k < pair_count; ++k) {
+//        printf("pair: %i, winner: %s, loser: %s", k, candidates[pairs[k].winner], candidates[pairs[k].loser]);
+//    }
+
     sort_pairs(0, pair_count - 1);
-    for (int a = 0; a < candidate_count; ++a) {
-        for (int b = 0; b < candidate_count; ++b) {
-            printf("pref[%i][%i]: %i ",a,b, preferences[a][b]);
-        }
-    }
     lock_pairs();
     print_winner();
     return 0;
@@ -112,7 +120,7 @@ bool vote(int rank, string name, int ranks[])
 {
     for (int i = 0; i < candidate_count; ++i)
     {
-        // if vote matches
+        // It is assumed that a voter won't vote 2 times for the same candidate
         if(strcmp(candidates[i], name) == 0)
         {
             // update rank: the voter has the preference rank for the candidate i
@@ -120,6 +128,7 @@ bool vote(int rank, string name, int ranks[])
             return true;
         }
     }
+
     // if the vote doesn't match any candidate name, it fails
     return false;
 }
@@ -175,19 +184,29 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(int inf_lim, int top_lim)
 {
+    printf("pair_count: %d \n", pair_count);
+    printf("sort: inf_lim: %d, top_lim: %d \n", inf_lim, top_lim);
     // if length = 1 : already sorted
-    if ((top_lim - inf_lim) == 1)
+    if (inf_lim == top_lim)
     {
         return;
     }
     // get the middle of the current portion
     int middle = inf_lim + ((top_lim - inf_lim)/2);
+    printf("sort: middle: %d \n", middle);
+
     // sort left before middle
-    sort_pairs(inf_lim, middle);
+    sort_pairs(inf_lim, middle == inf_lim ? middle : middle - 1);
     // sort right from middle
-    sort_pairs(middle, top_lim);
+    sort_pairs(middle == inf_lim ? middle + 1 : middle, top_lim);
 
     // merge left and right
+    merge(inf_lim, middle, top_lim);
+
+}
+
+void merge(int inf_lim, int middle, int top_lim)
+{
     int numberOfPairToOrder = top_lim - inf_lim + 1;
     int numberOfOrderedPairToCopy = numberOfPairToOrder;
     // temporary array
