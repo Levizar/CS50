@@ -33,6 +33,7 @@ bool vote(int rank, string name, int ranks[]);
 void record_preferences(const int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
+void merge_sort(int inf_lim, int top_lim);
 void lock_pairs(void);
 void print_winner(void);
 bool isCurrentPairCycling(int j);
@@ -173,25 +174,82 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    // find max
-    for (int k = 0; k < pair_count; ++k)
+//    // find max
+//    for (int k = 0; k < pair_count; ++k)
+//    {
+//        int max = preferences[pairs[k].winner][pairs[k].loser];
+//        int current_max_index = k;
+//        for (int i = k; i < pair_count; ++i)
+//        {
+//            int current_pair_victory = preferences[pairs[i].winner][pairs[i].loser];
+//            if (current_pair_victory > max)
+//            {
+//                max = current_pair_victory;
+//                current_max_index = i;
+//            }
+//        }
+//        // swap
+//        pair swap_pair;
+//        swap_pair = pairs[k];
+//        pairs[k] = pairs[current_max_index];
+//        pairs[current_max_index] = swap_pair;
+//    }
+    merge_sort(0, pair_count - 1);
+
+}
+
+void merge_sort(int inf_lim, int top_lim)
+{
+    if (inf_lim == top_lim)
     {
-        int max = preferences[pairs[k].winner][pairs[k].loser];
-        int current_max_index = k;
-        for (int i = k; i < pair_count; ++i)
+        return;
+    }
+
+    int middle = inf_lim + ((top_lim - inf_lim) / 2);
+    int middle_top = middle + 1;
+    // sort left
+    merge_sort(inf_lim, middle);
+    // sort right
+    merge_sort(middle_top, top_lim);
+    // merge
+    int length = top_lim - inf_lim + 1;
+    pair temporary_pair[length];
+
+    int indexLeft = inf_lim;
+    int indexRight = middle_top;
+    for (int i = 0; i < length; ++i)
+    {
+        if (indexLeft == middle_top)
         {
-            int current_pair_victory = preferences[pairs[i].winner][pairs[i].loser];
-            if (current_pair_victory > max)
-            {
-                max = current_pair_victory;
-                current_max_index = i;
-            }
+            // left is empty assign right
+            temporary_pair[i] = pairs[indexRight];
+            indexRight++;
         }
-        // swap
-        pair swap_pair;
-        swap_pair = pairs[k];
-        pairs[k] = pairs[current_max_index];
-        pairs[current_max_index] = swap_pair;
+        else if (indexRight > top_lim)
+        {
+            // right is empty assign left
+            temporary_pair[i] = pairs[indexLeft];
+            indexLeft++;
+        }
+        else if (preferences[pairs[indexLeft].winner][pairs[indexLeft].loser] >
+                 preferences[pairs[indexRight].winner][pairs[indexRight].loser])
+        {
+            // left is bigger assign left
+            temporary_pair[i] = pairs[indexLeft];
+            indexLeft++;
+        }
+        else
+        {
+            // right is bigger assign right
+            temporary_pair[i] = pairs[indexRight];
+            indexRight++;
+        }
+    }
+
+    for (int j = 0; j < length; ++j)
+    {
+        // rewrite original array
+        pairs[inf_lim + j] = temporary_pair[j];
     }
 
 }
