@@ -163,10 +163,6 @@ void add_pairs(void)
                 // store pair to the address pair_count and then increase pair_count
                 pairs[pair_count++] = newPair;
             }
-            else
-            {
-                // i and j are even : no winner, don't add the pair
-            }
         }
     }
 }
@@ -174,28 +170,7 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-//    // find max
-//    for (int k = 0; k < pair_count; ++k)
-//    {
-//        int max = preferences[pairs[k].winner][pairs[k].loser];
-//        int current_max_index = k;
-//        for (int i = k; i < pair_count; ++i)
-//        {
-//            int current_pair_victory = preferences[pairs[i].winner][pairs[i].loser];
-//            if (current_pair_victory > max)
-//            {
-//                max = current_pair_victory;
-//                current_max_index = i;
-//            }
-//        }
-//        // swap
-//        pair swap_pair;
-//        swap_pair = pairs[k];
-//        pairs[k] = pairs[current_max_index];
-//        pairs[current_max_index] = swap_pair;
-//    }
     merge_sort(0, pair_count - 1);
-
 }
 
 void merge_sort(int inf_lim, int top_lim)
@@ -294,7 +269,6 @@ bool isCurrentPairCycling(int loser)
 // Print the winner of the election
 void print_winner(void)
 {
-    int winner;
     for (int i = 0; i < candidate_count; ++i)
     {
         if (!isCandidateLocked(i))
