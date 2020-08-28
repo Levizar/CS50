@@ -33,8 +33,6 @@ bool vote(int rank, string name, int ranks[]);
 void record_preferences(const int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
-void sort_pairs_tool(int inf_lim, int top_lim);
-void merge(int inf_lim, int middle, int top_lim);
 void lock_pairs(void);
 void print_winner(void);
 bool isCurrentPairCycling(int j);
@@ -97,19 +95,7 @@ int main(int argc, string argv[])
         printf("\n");
     }
 
-//    for (int a = 0; a < candidate_count; ++a) {
-//        for (int b = 0; b < candidate_count; ++b) {
-//            printf("pref[%s][%s]: %i ",candidates[a],candidates[b], preferences[a][b]);
-//        }
-//        printf("\n");
-//    }
-
     add_pairs();
-
-//    for (int k = 0; k < pair_count; ++k) {
-//        printf("pair: %i, winner: %s, loser: %s\n", k, candidates[pairs[k].winner], candidates[pairs[k].loser]);
-//    }
-
     sort_pairs();
     lock_pairs();
 
@@ -187,56 +173,27 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    sort_pairs_tool(0, pair_count - 1);
-}
-// Sort pairs in decreasing order by strength of victory
-void sort_pairs_tool(int inf_lim, int top_lim)
-{
-//    printf("sort: inf_lim: %d, top_lim: %d \n", inf_lim, top_lim);
-    // if length = 1 : already sorted
-    if (inf_lim == top_lim)
+    // find max
+    for (int k = 0; k < pair_count; ++k)
     {
-        return;
+        int max = preferences[pairs[k].winner][pairs[k].loser];
+        int current_max_index = k;
+        for (int i = k; i < pair_count; ++i)
+        {
+            int current_pair_victory = preferences[pairs[i].winner][pairs[i].loser];
+            if (current_pair_victory > max)
+            {
+                max = current_pair_victory;
+                current_max_index = i;
+            }
+        }
+        // swap
+        pair swap_pair;
+        swap_pair = pairs[k];
+        pairs[k] = pairs[current_max_index];
+        pairs[current_max_index] = swap_pair;
     }
-    // get the middle of the current portion
-    int middle = inf_lim + ((top_lim - inf_lim) / 2);
-//    printf("sort: middle: %d \n", middle);
 
-    // sort left before middle
-    sort_pairs_tool(inf_lim, middle == inf_lim ? middle : middle - 1);
-    // sort right from middle
-    sort_pairs_tool(middle == inf_lim ? middle + 1 : middle, top_lim);
-    // merge left and right
-    merge(inf_lim, middle, top_lim);
-
-}
-
-void merge(int inf_lim, int middle, int top_lim)
-{
-    int numberOfPairToOrder = top_lim - inf_lim + 1;
-    int numberOfOrderedPairToCopy = numberOfPairToOrder;
-    // temporary array
-    pair subOrderedPairs[numberOfPairToOrder];
-    // merging sorting left and right
-    int indexLeft = inf_lim;
-    int indexRight = middle;
-    int i = 0;
-    while (numberOfPairToOrder > 0)
-    {
-        bool isMiddleReached = inf_lim + i == middle;
-        bool isLeftBiggerThanRight = preferences[pairs[indexLeft].winner][pairs[indexLeft].loser] >
-                                     preferences[pairs[indexRight].winner][pairs[indexRight].loser];
-        bool isLeftFirst = !isMiddleReached && isLeftBiggerThanRight;
-        subOrderedPairs[i].winner = isLeftFirst ? pairs[indexLeft].winner : pairs[indexRight].winner;
-        subOrderedPairs[i].loser = isLeftFirst ? pairs[indexLeft++].loser : pairs[indexRight++].loser;
-        i++;
-        numberOfPairToOrder--;
-    }
-    // subArray is now sorted : erase values in pairs array for this range
-    for (int j = 0; j < numberOfOrderedPairToCopy; ++j)
-    {
-        pairs[inf_lim + j] = subOrderedPairs[j];
-    }
 }
 
 // Lock pairs into the candidate graph in order, without creating cycles
@@ -250,7 +207,6 @@ void lock_pairs(void)
         // Does lock[winner][loser] create a cycle ?
         if (!isCurrentPairCycling(currentLoser))
         {
-//            printf("Locking: %s over %s\n", candidates[currentWinner], candidates[currentLoser]);
             locked[currentWinner][currentLoser] = true;
         }
     }
@@ -273,7 +229,7 @@ bool isCurrentPairCycling(int loser)
         }
     }
 
-    // base case: if the loser
+    // base case: if the loser isn't locking anyone or if the lock isn't cycling
     return false;
 }
 
@@ -296,7 +252,6 @@ bool isCandidateLocked(int candidateIndex)
     {
         if (locked[i][candidateIndex])
         {
-//            printf("Candidate: %s has been locked by candidate: %s\n", candidates[candidateIndex], candidates[i]);
             return true;
         }
     }
