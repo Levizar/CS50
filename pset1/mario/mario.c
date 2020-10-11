@@ -3,13 +3,12 @@
 #include <cs50.h>
 
 int promptForHeight(void);
+
 void draw(int n, int height);
 
 int main(void)
 {
     int height = promptForHeight();
-    int lineSize = (height * 2) + 2;
-
     // draw the whole pyramid
     draw(height, height);
 

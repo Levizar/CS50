@@ -18,7 +18,7 @@ typedef struct
     int winner;
     int loser;
 }
-pair;
+        pair;
 
 // Array of candidates
 string candidates[MAX];
@@ -30,13 +30,21 @@ int currentWinner;
 
 // Function prototypes
 bool vote(int rank, string name, int ranks[]);
+
 void record_preferences(const int ranks[]);
+
 void add_pairs(void);
+
 void sort_pairs(void);
+
 void merge_sort(int inf_lim, int top_lim);
+
 void lock_pairs(void);
+
 void print_winner(void);
+
 bool isCurrentPairCycling(int j);
+
 bool isCandidateLocked(int candidateIndex);
 
 int main(int argc, string argv[])

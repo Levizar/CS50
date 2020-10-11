@@ -4,7 +4,8 @@
 #include <ctype.h>
 #include <math.h>
 
-int test(string text) {
+int test(string text)
+{
     //    string text = "When he was nearly thirteen, my brother Jem got his arm badly broken at the elbow. When it healed, and Jem's fears of never being able to play football were assuaged, he was seldom self-conscious about his injury. His left arm was somewhat shorter than his right; when he stood or walked, the back of his hand was at right angles to his body, his thumb parallel to his thigh.";
     //string text = get_string("Text: ");
 
@@ -14,14 +15,20 @@ int test(string text) {
     int sentence = 0;
     int textLength = strlen(text);
 
-    for (int i = 0; i < textLength; ++i) {
-        if (isalnum(text[i])) {
+    for (int i = 0; i < textLength; ++i)
+    {
+        if (isalnum(text[i]))
+        {
             letter++;
             //printf("%c", text[i]);
-        } else if ((int) text[i] == ' ') {
+        }
+        else if ((int) text[i] == ' ')
+        {
             word++;
             //printf("%d%c", word, text[i]);
-        } else if (((int) text[i] == (int) '.') || ((int) text[i] == (int) '!') || ((int) text[i] == (int) '?')) {
+        }
+        else if (((int) text[i] == (int) '.') || ((int) text[i] == (int) '!') || ((int) text[i] == (int) '?'))
+        {
             sentence++;
             //printf("%c\n", text[i]);
         }
@@ -41,18 +48,24 @@ int test(string text) {
     printf("letters: %d, words: %d, sentences: %d\n", letter, word, sentence);
     printf("avgLength: %f, avgSentence: %f\n", avgLength, avgSentence);
 
-    if (grade < 1) {
+    if (grade < 1)
+    {
         printf("Before Grade 1\n");
-    } else if (grade > 15) {
+    }
+    else if (grade > 15)
+    {
         printf("Grade 16+\n");
-    } else {
+    }
+    else
+    {
         printf("Grade %d\n", grade);
     }
 
     return 0;
 }
 
-int main(void) {
+int main(void)
+{
     test("One fish. Two fish. Red fish. Blue fish.");
     printf("should be: Before Grade 1\n");
     test("Would you like them here or there? I would not like them here or there. I would not like them anywhere.");

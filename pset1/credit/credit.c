@@ -4,6 +4,7 @@
 bool isCardNumberValid(long cardNumber);
 
 int get2FirstDigit(long cardNumber);
+
 int getNumberOfDigit(long cardNumber);
 
 /**
