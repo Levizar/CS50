@@ -194,18 +194,18 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                     if (i + k >= 0 && i + k < height && j + l >= 0 && j + l < width)
                     {
                         xRed += image[i + k][j + l].rgbtRed * GX[k + 1][l + 1];
-                        yRed += image[j + k][j + l].rgbtRed * GY[k + 1][l + 1];
+                        yRed += image[i + k][j + l].rgbtRed * GY[k + 1][l + 1];
                         xBlue += image[i + k][j + l].rgbtBlue * GX[k + 1][l + 1];
-                        yBlue += image[j + k][j + l].rgbtBlue * GY[k + 1][l + 1];
+                        yBlue += image[i + k][j + l].rgbtBlue * GY[k + 1][l + 1];
                         xGreen += image[i + k][j + l].rgbtGreen * GX[k + 1][l + 1];
-                        yGreen += image[j + k][j + l].rgbtGreen * GY[k + 1][l + 1];
+                        yGreen += image[i + k][j + l].rgbtGreen * GY[k + 1][l + 1];
                     }
                 }
             }
             // define final value for RGB : square_root(x² + y²) capped at 255
             edge_image[i][j].rgbtRed = capped_square_root(xRed * xRed + yRed * yRed);
-            edge_image[i][j].rgbtGreen = capped_square_root(yGreen * yGreen + yGreen * yGreen);
-            edge_image[i][j].rgbtBlue = capped_square_root(yBlue * yBlue + yBlue * yBlue);
+            edge_image[i][j].rgbtGreen = capped_square_root(xGreen * xGreen + yGreen * yGreen);
+            edge_image[i][j].rgbtBlue = capped_square_root(xBlue * xBlue + yBlue * yBlue);
         }
     }
     memcpy((void *) image, (void *) edge_image, height * width * sizeof(RGBTRIPLE));
