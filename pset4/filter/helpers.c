@@ -172,12 +172,18 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
 
     RGBTRIPLE edge_image[height][width];
     // Gx and Gy definition
-    int GX[3][3] = {{-1, 0, 1},
+    int GX[3][3] =
+            {
+                    {-1, 0, 1},
                     {-2, 0, 2},
-                    {-1, 0, 1}};
-    int GY[3][3] = {{-1, -2, -1},
+                    {-1, 0, 1}
+            };
+    int GY[3][3] =
+            {
+                    {-1, -2, -1},
                     {0,  0,  0},
-                    {1,  2,  1}};
+                    {1,  2,  1}
+            };
 
     for (int i = 0; i < height; ++i)
     {
