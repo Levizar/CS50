@@ -16,7 +16,7 @@ int dictSize = 0;
 
 unsigned int hash(const char *word);
 
-unsigned int getKey(unsigned int hash);
+unsigned int getKeyFromHash(unsigned int hash);
 
 bool unload(void);
 
@@ -29,7 +29,7 @@ typedef struct node
 } node;
 
 // Number of buckets in hash table
-const unsigned int N = 1;
+const unsigned int N = 15;
 
 // Hash table
 node *table[N];
@@ -43,18 +43,20 @@ bool check(const char *word)
         return false;
     }
 
-    // lowering the input word
-    unsigned int length = strlen(word);
-    char lowerCaseWord[length];
-    for (int i = 0; i <= length; ++i)
+    const char *wordPtr = word;
+    char lowerCaseWord[LENGTH + 1];
+    unsigned int i = 0;
+    while (*wordPtr != '\0')
     {
-        lowerCaseWord[i] = (char) tolower(word[i]);
+        lowerCaseWord[i] = (char) tolower(*wordPtr);
+        wordPtr++;
     }
+    lowerCaseWord[i] = '\0';
 
     // get the hash
     unsigned int hashCode = hash(word);
     // get the key
-    unsigned int key = getKey(hashCode);
+    unsigned int key = getKeyFromHash(hashCode);
 
     // check if there is a pointer for that key
     node *list = table[key];
@@ -69,13 +71,12 @@ bool check(const char *word)
         // if same hash check the word (Simple hash could collide with other)
         if (hashCode == list->hash && !strcmp(list->word, lowerCaseWord))
         {
-            strcmp(lowerCaseWord, list->word);
             return true;
         }
         // if not the same go to next node
         list = list->next;
     }
-    // if not found before the linkedList queue then it's not there
+    // if not found before the linkedList end then it's not part of the list
     return false;
 }
 
@@ -84,15 +85,15 @@ unsigned int hash(const char *word)
 {
     // simple hash by adding the int value of char
     unsigned int hash = 0;
-    for (char *c = word; *c != '\0'; c++)
+    while (*word != '\0')
     {
-        hash += (int) *c;
+        hash += (int) *word++;
     }
     return hash;
 }
 
 // get the key for this hash
-unsigned int getKey(unsigned int hash)
+unsigned int getKeyFromHash(unsigned int hash)
 {
     return hash % N;
 }
@@ -100,54 +101,60 @@ unsigned int getKey(unsigned int hash)
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
-    char *word = malloc(LENGTH * sizeof(char) + 1);
-    if (word == NULL)
+    // initialize the array pointer to avoid segmentation fault
+    for (int i = 0; i < N; ++i)
     {
-        return false;
+        table[i] = NULL;
     }
 
-    char *pt = dictionary;
+    // Todo: dictionary is the path to the file of the dictionary, not the dictionary
+    // Todo: load the dictionary file
+
+
+
+    // parse dictionary file
     unsigned int i;
-    // TODO: parse dictionary
     while (*dictionary)
     {
-        // read a word
-        i = 0;
-        while (*pt != '\n')
+        // allocate memory for a new node
+        node *newNode = malloc(sizeof(struct node));
+        if (newNode == NULL)
         {
-            word[i++] = *pt;
-        }
-        word[i] = '\0';
-
-        unsigned int hashCode = hash(word);
-        unsigned int key = getKey(hashCode);
-
-        // get the first node for that key
-        node *list = table[key];
-        // insert into the link list of that key
-        while (list != NULL)
-        {
-            // get next node
-            list = list->next;
-        }
-        list = malloc(sizeof(struct node));
-        if(list == NULL)
-        {
-            free(word);
             unload();
             return false;
         }
-        // todo : copy the string to node.word
-        list->word[i]
 
-        // increase dictSize
+        i = 0;
+        while (*dictionary != '\n')
+        {
+            newNode->word[i++] = *dictionary++;
+        }
+        newNode->word[i] = '\0';
+        newNode->hash = hash(newNode->word);
+        unsigned int key = getKeyFromHash(newNode->hash);
 
-        // next word
+        // get head and search for tail + attach new node to tail
+        node *list = table[key];
+        // insert into the link list of that key
+        if (list == NULL)
+        {
+            table[key] = newNode;
+        }
+        else
+        {
+            // get the tail
+            while (list->next != NULL)
+            {
+                list = list->next;
+            }
+            list->next = newNode;
+        }
 
+        // increase dictSize and go to next line
+        dictSize++, dictionary++;
 
     }
 
-    free(word);
     return true;
 }
 
