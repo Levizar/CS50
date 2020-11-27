@@ -131,6 +131,7 @@ bool load(const char *dictionary)
         }
         newNode->word[i] = '\0';
         newNode->hash = hash(newNode->word);
+        newNode->next = NULL;
         unsigned int key = getKeyFromHash(newNode->hash);
 
         // get head and search for tail + attach new node to tail
@@ -164,9 +165,42 @@ unsigned int size(void)
     return dictSize;
 }
 
+void unloadLinkedListIterative(struct node *list)
+{
+    node *nextNode = NULL;
+    while(list != NULL)
+    {
+        nextNode = list->next;
+        free(list);
+        list = nextNode;
+    }
+
+}
+
+void UnloadLinkedListRecursive(struct node *list)
+{
+    if (list->next != NULL)
+    {
+        UnloadLinkedListRecursive(list->next);
+        free(list);
+    }
+    else
+    {
+        free(list);
+    }
+}
+
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
-    // TODO
-    return false;
+    for (int i = 0; i < N; ++i)
+    {
+        if (table[i] != NULL)
+        {
+            unloadLinkedListIterative(table[i]);
+        }
+    }
+    return true;
 }
+
+
