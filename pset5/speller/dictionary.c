@@ -107,14 +107,19 @@ bool load(const char *dictionary)
         table[i] = NULL;
     }
 
-    // Todo: dictionary is the path to the file of the dictionary, not the dictionary
-    // Todo: load the dictionary file
-
+    //
+    FILE *inputFile = fopen(dictionary, "r");
+    if (inputFile == NULL)
+    {
+        printf("Could not open %s\n", dictionary);
+        return false;
+    }
+    char bufferChar[1];
 
 
     // parse dictionary file
     unsigned int i;
-    while (*dictionary)
+    while (fread(bufferChar, sizeof(char), 1, inputFile))
     {
         // allocate memory for a new node
         node *newNode = malloc(sizeof(struct node));
@@ -125,9 +130,10 @@ bool load(const char *dictionary)
         }
 
         i = 0;
-        while (*dictionary != '\n')
+        while (bufferChar[0] != '\n')
         {
-            newNode->word[i++] = *dictionary++;
+            newNode->word[i++] = bufferChar[0];
+            fread(bufferChar, sizeof(char), 1, inputFile);
         }
         newNode->word[i] = '\0';
         newNode->hash = hash(newNode->word);
@@ -152,10 +158,10 @@ bool load(const char *dictionary)
         }
 
         // increase dictSize and go to next line
-        dictSize++, dictionary++;
-
+        dictSize++;
     }
 
+    fclose(inputFile);
     return true;
 }
 
