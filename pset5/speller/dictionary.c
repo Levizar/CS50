@@ -34,6 +34,7 @@ const unsigned int N = 15;
 // Hash table
 node *table[N];
 
+// Todo: debug check
 // Returns true if word is in dictionary else false
 bool check(const char *word)
 {
@@ -46,6 +47,7 @@ bool check(const char *word)
     const char *wordPtr = word;
     char lowerCaseWord[LENGTH + 1];
     unsigned int i = 0;
+    // Todo: there is a problem here -> "LA" ended up in "0/000 0/000...."
     while (*wordPtr != '\0')
     {
         lowerCaseWord[i] = (char) tolower(*wordPtr);
@@ -162,7 +164,8 @@ bool load(const char *dictionary)
     }
 
     fclose(inputFile);
-    return true;
+    isDictionaryLoaded = true;
+    return isDictionaryLoaded;
 }
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
