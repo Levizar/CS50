@@ -175,7 +175,7 @@ unsigned int size(void)
 void unloadLinkedListIterative(struct node *list)
 {
     node *nextNode = NULL;
-    while(list != NULL)
+    while (list != NULL)
     {
         nextNode = list->next;
         free(list);
