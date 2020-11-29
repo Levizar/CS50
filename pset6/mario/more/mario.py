@@ -1,6 +1,6 @@
 if __name__ == "__main__":
 
-    # Recursiv drawing
+    # Recursive drawing
     def draw(n, height):
         # Base case
         if n == 0:
@@ -9,23 +9,15 @@ if __name__ == "__main__":
         draw(n - 1, height)
         # Draw if not base case
         k = height - n
-        line = ""
-        for i in range(k):
-            line += " "
-        for i in range(n):
-            line += "#"
-        for i in range(2):
-            line += " "
-        for i in range(n):
-            line += "#"
+        line = k * " " + n * "#" + 2 * " " + n * "#"
         print(line)
 
     # get correct input
     height = int()
-    while (height < 1 or height > 8):
+    while height < 1 or height > 8:
         try:
             height = int(input("Height: "))
-        except:
+        except ValueError:
             continue
 
     draw(height, height)
